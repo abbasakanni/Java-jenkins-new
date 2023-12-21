@@ -9,6 +9,8 @@ pipeline {
         stage('Checkout') {
             steps {
                 sh 'echo passed'
+                git branch: 'main', url: 'https://github.com/abbasakanni/Java-jenkins-new.git'
+                
             }
         }
         stage('Build and Test') {
