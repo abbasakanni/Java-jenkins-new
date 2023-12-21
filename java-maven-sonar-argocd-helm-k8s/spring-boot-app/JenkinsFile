@@ -7,7 +7,7 @@ pipeline {
     }
     stages {
         stage('Checkout') {
-            step {
+            steps {
                 sh 'echo passed'
             }
         }
@@ -22,7 +22,9 @@ pipeline {
                 SONAR_URL = 'http://3.85.211.134:9000'
             }
             steps {
-                sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}'
+            withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
+               sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}'
+              }
             }
         }
         stage('Build and Push Docker Image') {
@@ -31,10 +33,10 @@ pipeline {
                 // DOCKERFILE_LOCATION = "java-maven-sonar-argocd-helm-k8s/spring-boot-app/Dockerfile"
                 REGISTRY_CREDENTIALS = credentials('docker-cred')
             }
-            step {
+            steps {
                 script {
-                    sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t ${DOCKER_IMAGE} . '
-                    def dockerImage = docker.image('${DOCKER_IMAGE}')
+                    sh "cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t ${DOCKER_IMAGE} ."
+                    def dockerImage = docker.image("${DOCKER_IMAGE}")
                     docker.withRegistry('https://index.docker.io/v2/', 'docker-cred') {
                         dockerImage.push()
                     }
