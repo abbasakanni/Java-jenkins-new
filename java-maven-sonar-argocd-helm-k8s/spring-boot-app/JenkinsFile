@@ -48,7 +48,7 @@ pipeline {
                 GIT_REPO_NAME = 'Java-jenkins-new'
                 GIT_USER_NAME = 'abbasakanni'
             }
-            step {
+            steps {
                 withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
                     sh '''
                         git config user.email "abbasakanni@gmail.com"
