@@ -6,6 +6,12 @@ pipeline {
         }
     }
     stages {
+        stage('Prepare Workspace') {
+            steps {
+                // Clean up the workspace before starting the build
+                cleanWs()
+            }
+        }
         stage('Checkout') {
             steps {
                 sh 'echo passed'
