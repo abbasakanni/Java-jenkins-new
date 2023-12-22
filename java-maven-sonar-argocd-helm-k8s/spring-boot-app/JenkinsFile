@@ -15,6 +15,8 @@ pipeline {
         stage('Checkout') {
             steps {
                 sh 'echo passed'
+                // Reset the Git repository state and clean up untracked files
+                sh 'if [ -d .git ]; then git reset --hard; git clean -fdx; fi'
                 git branch: 'main', url: 'https://github.com/abbasakanni/Java-jenkins-new.git'
                 
             }
